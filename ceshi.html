@@ -26,6 +26,189 @@
                 window.history.pushState(state, "title", "#");
             }
         });
+        
+         '话题排行榜
+    Function Huati(Optional ByVal Page As Integer = 1, Optional ByVal Size As Integer = 20) As ContentResult
+        Dim Model As New Model.PageHelp(Of Model.Users)
+        Model = Dal.DalUsers.GetUserListByDescHuati(Page:=Page, Size:=Size)
+        Return JsonFormat(Model)
+    End Function
+
+    '用户注册
+    Function SetUser(ByVal Code As String, ByVal Nick As String, ByVal HeadImg As String, ByVal Name As String, ByVal Mobile As String, ByVal Desc As String) As JsonResult
+        Dim Errmsg As String = Nothing
+        Dim Rsp As New Object
+        If AddUser(Code:=Code, Nick:=Nick, HeadImg:=HeadImg, Name:=Name, Mobile:=Mobile, Desc:=Desc, Errmsg:=Errmsg) Then
+            Rsp = New With {.Errcode = 0, .Errmsg = "ok"}
+        Else
+            Rsp = New With {.Errcode = 1, .Errmsg = Errmsg}
+        End If
+        Return Json(Rsp, JsonRequestBehavior.AllowGet)
+    End Function
+
+    '添加小号
+    Function SetMajia(ByVal Code As String, ByVal Name As String, ByVal Desc As String, ByVal HeadImg As String) As JsonResult
+        Dim Errmsg As String = Nothing
+        Dim Rsp As New Object
+        If AddMajia(Code:=Code, Name:=Name, HeadImg:=HeadImg, Desc:=Desc, Errmsg:=Errmsg) Then
+            Rsp = New With {.Errcode = 0, .Errmsg = "ok"}
+        Else
+            Rsp = New With {.Errcode = 1, .Errmsg = Errmsg}
+        End If
+        Return Json(Rsp, JsonRequestBehavior.AllowGet)
+    End Function
+
+    '发表论题
+    Function SetLunti(ByVal Code As String, ByVal Title As String, ByVal Body As String, ByVal SortId As Integer, Optional ByVal MajiaId As Long = Nothing) As JsonResult
+        Dim Errmsg As String = Nothing
+        Dim Rsp As New Object
+        If AddLunti(Code:=Code, SortId:=SortId, Title:=Title, Body:=Body, MajiaId:=MajiaId, Errmsg:=Errmsg) Then
+            Rsp = New With {.Errcode = 0, .Errmsg = "ok"}
+        Else
+            Rsp = New With {.Errcode = 1, .Errmsg = Errmsg}
+        End If
+        Return Json(Rsp, JsonRequestBehavior.AllowGet)
+    End Function
+
+    '发表论点
+    Function SetLundian(ByVal Code As String, ByVal LuntiId As Long, ByVal Body As String, ByVal Zhenying As Boolean, Optional ByVal MajiaId As Long = Nothing) As JsonResult
+        Dim Errmsg As String = Nothing
+        Dim Rsp As New Object
+        If AddLundian(Code:=Code, LuntiId:=LuntiId, Zhenying:=Zhenying, Body:=Body, MajiaId:=MajiaId, Errmsg:=Errmsg) Then
+            Rsp = New With {.Errcode = 0, .Errmsg = "ok"}
+        Else
+            Rsp = New With {.Errcode = 1, .Errmsg = Errmsg}
+        End If
+        Return Json(Rsp, JsonRequestBehavior.AllowGet)
+    End Function
+
+    '论点评论
+    Function SetPinglun(ByVal Code As String, ByVal LundianId As Long, ByVal Zhenying As Boolean, Optional ByVal Price As Decimal = Nothing, Optional ByVal MajiaId As Long = Nothing) As JsonResult
+        Dim Errmsg As String = Nothing
+        Dim Rsp As New Object
+        If AddPinglun(Code:=Code, LundianId:=LundianId, Zhenying:=Zhenying, Price:=Price, MajiaId:=MajiaId, Errmsg:=Errmsg) Then
+            Rsp = New With {.Errcode = 0, .Errmsg = "ok"}
+        Else
+            Rsp = New With {.Errcode = 1, .Errmsg = Errmsg}
+        End If
+        Return Json(Rsp, JsonRequestBehavior.AllowGet)
+
+    End Function
+
+    '拉取用户详情
+    Function GetUser(ByVal Code As String) As ContentResult
+
+        Dim Errmsg As String = Nothing
+        Dim Model As New Model.Users
+        Dim Rsp As New Object
+        If GetUsers(Code:=Code, Users:=Model, Errmsg:=Errmsg) Then
+            Rsp = New With {.Errcode = 0, .Errmsg = "ok", .User = Model}
+        Else
+            Rsp = New With {.Errcode = 1, .Errmsg = Errmsg}
+        End If
+        Return JsonFormat(Rsp)
+
+    End Function
+
+    '拉取马甲详情
+    Function GetMajia(ByVal UserId As Long) As ContentResult
+
+        Dim Errmsg As String = Nothing
+        Dim Model As New Model.Users
+        Dim Rsp As New Object
+        If Dal.DalUsers.GetMajia(MajiaId:=UserId, Majias:=Model, Errmsg:=Errmsg) Then
+            Rsp = New With {.Errcode = 0, .Errmsg = "ok", .User = Model}
+        Else
+            Rsp = New With {.Errcode = 1, .Errmsg = Errmsg}
+        End If
+        Return JsonFormat(Rsp)
+
+    End Function
+
+    '删除马甲
+    Function DelMajia(ByVal Code As String, ByVal MajiaId As Long) As JsonResult
+
+        Dim Errmsg As String = Nothing
+        Dim Rsp As New Object
+        If DelMajia(Code:=Code, MajiaId:=MajiaId, Errmsg:=Errmsg) Then
+            Rsp = New With {.Errcode = 0, .Errmsg = "ok"}
+        Else
+            Rsp = New With {.Errcode = 1, .Errmsg = Errmsg}
+        End If
+        Return Json(Rsp, JsonRequestBehavior.AllowGet)
+    End Function
+
+    '拉取马甲列表
+    Function GetMajiaList(ByVal UserId As Long, Optional ByVal Page As Integer = 1, Optional ByVal Size As Integer = 20) As ContentResult
+        Dim Model As New Model.PageHelp(Of Model.Users)
+        Model = Dal.DalUsers.GetMajiaList(UserId:=UserId, Page:=Page, Size:=Size)
+        Return JsonFormat(Model)
+    End Function
+
+    '拉取论题详情
+    Function GetLunti(ByVal LuntiId As Long) As ContentResult
+        Dim Errmsg As String = Nothing
+        Dim Model As New Model.Luntis
+        Dim Rsp As New Object
+        If Dal.Newss.GetLunti(LuntiId:=LuntiId, Luntis:=Model, Errmsg:=Errmsg) Then
+            Rsp = New With {.Errcode = 0, .Errmsg = "ok", .Lunti = Model}
+        Else
+            Rsp = New With {.Errcode = 1, .Errmsg = Errmsg}
+        End If
+        Return JsonFormat(Rsp)
+    End Function
+
+    '拉取论题列表
+    Function GetLuntiList(Optional ByVal Page As Integer = 1, Optional ByVal Size As Integer = 20, Optional ByVal SortId As Integer = Nothing, Optional ByVal UserId As Long = Nothing, Optional ByVal Key As String = Nothing, Optional ByVal By As String = "faqi") As ContentResult
+        Dim Model As New Model.PageHelp(Of Model.Luntis)
+        Model = Dal.Newss.GetLuntiList(Page:=Page, Size:=Size, SortId:=SortId, UserId:=UserId, Key:=Key, By:=By)
+        Return JsonFormat(Model)
+    End Function
+
+    '拉取论点列表
+    Function GetLundianList(ByVal LuntiId As Long, Optional ByVal Page As Integer = 1, Optional ByVal Size As Integer = 20) As ContentResult
+        Dim Model As New Model.PageHelp(Of Model.Luntis)
+        Model = Dal.Newss.GetLundianList(LuntiId:=LuntiId, Page:=Page, Size:=Size)
+        Return JsonFormat(Model)
+    End Function
+
+    '拉取分类列表
+    Function GetSortList() As ContentResult
+        Dim Model As New List(Of Model.Sorts)
+        Model = Dal.Newss.GetSortList
+        Return JsonFormat(New With {.Errcode = 0, .Errmsg = "ok", .List = Model})
+    End Function
+
+    '图片上传
+    <HttpPost>
+    Public Function Upload() As JsonResult
+        'Dim model As New UploadFileDTO()
+        Dim file As HttpPostedFileBase = Request.Files("uploadfile_ant")
+        Dim Path As String = "/{0}/{1}{2}"
+        If Not IsNothing(file) Then
+
+            '获取文件后缀  
+            Dim extensionName As String = System.IO.Path.GetExtension(file.FileName)
+
+            Path = String.Format(Path, "img", Now.Ticks.ToString, extensionName)
+
+            Dim fileName As String = file.FileName
+            Dim filePath As String = Server.MapPath(String.Format("~/{0}", "File"))
+            'file.SaveAs(Path.Combine(filePath, fileName))
+            file.SaveAs("E:\wwwroot\youyiwxa\web\" & Path)
+        End If
+        'Return Content("ok")
+
+        Dim Rsp As New Object
+
+        Rsp = New With {.Errcode = 0, .Errmsg = "ok", .Url = "http://youyiwxa.et22.com/", .Path = Path}
+
+        'Dim str As String = serializer.Serialize(Rsp)
+        Return Json(Rsp, JsonRequestBehavior.AllowGet)
+
+
+    End Function
+
     </script>
 </body>
 
